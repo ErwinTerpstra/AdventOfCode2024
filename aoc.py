@@ -1,10 +1,12 @@
 import sys
+import numpy as np
 
 from pathlib import Path
 
 MODE_LINES = 'lines'
+MODE_GRID = 'grid'
 
-def load_input(mode: str, remove_newlines = True):
+def load_input(mode: str, remove_newlines = True, use_np = False, dtype=str):
 	"""Load input based on the current executing script."""
 
 	# Determine input type from command line parameters
@@ -30,5 +32,14 @@ def load_input(mode: str, remove_newlines = True):
 	if remove_newlines:
 		lines = [ line.replace('\r', '').replace('\n', '') for line in lines ]
 
-	# mode == lines or others	
+	# Split by whitespace into grid
+	if mode == MODE_GRID:
+		lines = [ line.split() for line in lines]
+		lines = [ [ dtype(x) for x in line ] for line in lines ]
+	else:
+		line = [ dtype(line) for line in lines ]
+
+	if use_np:
+		lines = np.array(lines)
+
 	return lines
