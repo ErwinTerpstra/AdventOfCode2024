@@ -6,7 +6,7 @@ from pathlib import Path
 MODE_LINES = 'lines'
 MODE_GRID = 'grid'
 
-def load_input(mode: str, remove_newlines = True, use_np = False, dtype=str):
+def load_input(mode: str, remove_newlines = True, use_numpy = False, dtype=str, numpy_axis = 0):
 	"""Load input based on the current executing script."""
 
 	# Determine input type from command line parameters
@@ -34,12 +34,19 @@ def load_input(mode: str, remove_newlines = True, use_np = False, dtype=str):
 
 	# Split by whitespace into grid
 	if mode == MODE_GRID:
-		lines = [ line.split() for line in lines]
-		lines = [ [ dtype(x) for x in line ] for line in lines ]
+		lines = [ [ dtype(x) for x in line.split() ] for line in lines]
 	else:
-		line = [ dtype(line) for line in lines ]
+		lines = [ dtype(line) for line in lines ]
 
-	if use_np:
-		lines = np.array(lines)
+	# Convert to numpy
+	if use_numpy:
+		if numpy_axis == 1:
+			lines = [ np.array(line) for line in lines ]
+		else:
+			lines = np.array(lines)
+
+	# Random newline print since the debugger output starts on the same
+	# line as the command line :/
+	print('')
 
 	return lines
