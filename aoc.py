@@ -5,6 +5,7 @@ from pathlib import Path
 
 MODE_LINES = 'lines'
 MODE_GRID = 'grid'
+MODE_STRING = 'string'
 
 def load_input(mode: str, remove_newlines = True, use_numpy = False, dtype=str, numpy_axis = 0):
 	"""Load input based on the current executing script."""
@@ -35,6 +36,8 @@ def load_input(mode: str, remove_newlines = True, use_numpy = False, dtype=str, 
 	# Split by whitespace into grid
 	if mode == MODE_GRID:
 		lines = [ [ dtype(x) for x in line.split() ] for line in lines]
+	if mode == MODE_STRING:
+		lines = ''.join(lines)
 	else:
 		lines = [ dtype(line) for line in lines ]
 
