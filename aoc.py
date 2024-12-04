@@ -7,7 +7,13 @@ MODE_LINES = 'lines'
 MODE_GRID = 'grid'
 MODE_STRING = 'string'
 
-def load_input(mode: str, remove_newlines = True, use_numpy = False, dtype=str, numpy_axis = 0):
+def load_input(
+		mode: str, 
+		remove_newlines = True, 
+		column_separator = None,
+		use_numpy = False, 
+		dtype=str, 
+		numpy_axis = 0):
 	"""Load input based on the current executing script."""
 
 	# Determine input type from command line parameters
@@ -35,8 +41,11 @@ def load_input(mode: str, remove_newlines = True, use_numpy = False, dtype=str, 
 
 	# Split by whitespace into grid
 	if mode == MODE_GRID:
-		lines = [ [ dtype(x) for x in line.split() ] for line in lines]
-	if mode == MODE_STRING:
+		def split_line(line):
+			return line.split(column_separator) if column_separator != '' else line
+	
+		lines = [ [ dtype(x) for x in split_line(line) ] for line in lines]
+	elif mode == MODE_STRING:
 		lines = ''.join(lines)
 	else:
 		lines = [ dtype(line) for line in lines ]
