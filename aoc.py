@@ -2,6 +2,7 @@ import sys
 import numpy as np
 
 from pathlib import Path
+from collections import defaultdict
 
 MODE_LINES = 'lines'
 MODE_GRID = 'grid'
@@ -12,7 +13,7 @@ def load_input(
 		remove_newlines = True, 
 		column_separator = None,
 		use_numpy = False, 
-		dtype=str, 
+		dtype = str, 
 		numpy_axis = 0):
 	"""Load input based on the current executing script."""
 
@@ -62,3 +63,14 @@ def load_input(
 	print('')
 
 	return lines
+
+def pairs_to_dict(l):
+	d = defaultdict(list)
+	
+	for item in l:
+		d[item[0]].append(item[1])
+
+	return d
+
+def reversed_as_tuple(iter):
+	return tuple(reversed(tuple(iter)))
