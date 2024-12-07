@@ -14,8 +14,11 @@ def load_input(
 		column_separator = None,
 		use_numpy = False, 
 		dtype = str, 
+		preprocess = None,
 		numpy_axis = 0):
 	"""Load input based on the current executing script."""
+
+	preprocess = preprocess or (lambda x: x)
 
 	# Determine input type from command line parameters
 	# Should usually be 'input' or 'example'
@@ -42,14 +45,13 @@ def load_input(
 
 	# Split by whitespace into grid
 	if mode == MODE_GRID:
-		def split_line(line):
-			return line.split(column_separator) if column_separator != '' else line
+		split_line = lambda line: line.split(column_separator) if column_separator != '' else line
 	
-		lines = [ [ dtype(x) for x in split_line(line) ] for line in lines]
+		lines = [ [ dtype(preprocess(x)) for x in split_line(line) ] for line in lines]
 	elif mode == MODE_STRING:
 		lines = ''.join(lines)
 	else:
-		lines = [ dtype(line) for line in lines ]
+		lines = [ dtype(preprocess(line)) for line in lines ]
 
 	# Convert to numpy
 	if use_numpy:
