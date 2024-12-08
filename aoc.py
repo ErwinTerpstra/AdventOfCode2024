@@ -1,8 +1,8 @@
 import sys
+import util
 import numpy as np
 
 from pathlib import Path
-from collections import defaultdict
 
 MODE_LINES = 'lines'
 MODE_GRID = 'grid'
@@ -66,13 +66,5 @@ def load_input(
 
 	return lines
 
-def pairs_to_dict(l):
-	d = defaultdict(list)
-	
-	for item in l:
-		d[item[0]].append(item[1])
-
-	return d
-
-def reversed_as_tuple(iter):
-	return tuple(reversed(tuple(iter)))
+pairs_to_dict = lambda l: util.pairs_to_dict(l)
+reversed_as_tuple = lambda iter: util.reversed_as_tuple(iter)
