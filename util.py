@@ -52,3 +52,7 @@ def groupby(items, key):
 		d[key(item)].append(item)
 
 	return d
+
+def index(items, value, key=lambda x: x):
+	iter = (i for i, v in enumerate(items) if key(v) == value)
+	return next(iter)
