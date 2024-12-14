@@ -1,4 +1,4 @@
-
+import itertools
 from collections import defaultdict
 
 # General arithmetic operators for multidimensional tuples
@@ -9,7 +9,22 @@ div = lambda lhs, rhs: tuple((a // b for a, b in zip(*expand_args(lhs, rhs))))
 
 neg = lambda value: tuple((-x for x in value))
 
+# Grid utils
+ZERO = (0, 0)
+ONE = (1, 1)
+
+LEFT = (0, -1)
+RIGHT = (0, 1)
+UP = (-1, 0)
+DOWN = (1, 0)
+
+CARDINAL_DIRECTIONS = \
+[
+	LEFT, RIGHT, UP, DOWN
+]
+
 in_grid = lambda pos, size: pos[0] >= 0 and pos[1] >= 0 and pos[0] < size[1] and pos[1] < size[1]
+all_coordinates = lambda size, padding=0: itertools.product(*( range(padding, dim - padding) for dim in size ))
 
 def expand_args(lhs, rhs):
 	l_is_iter = is_iterable(lhs)
