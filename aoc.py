@@ -11,6 +11,7 @@ MODE_STRING = 'string'
 def load_input(
 		mode: str, 
 		remove_newlines = True, 
+		remove_empty = False,
 		column_separator = None,
 		use_numpy = False, 
 		dtype = str, 
@@ -42,6 +43,10 @@ def load_input(
 	# Remove newlines if desired
 	if remove_newlines:
 		lines = [ line.replace('\r', '').replace('\n', '') for line in lines ]
+
+	# Remove empty entries if desired
+	if remove_empty:
+		lines = [ line for line in lines if line != '' ]
 
 	# Split by whitespace into grid
 	if mode == MODE_GRID:
