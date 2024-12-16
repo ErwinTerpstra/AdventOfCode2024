@@ -1,31 +1,14 @@
 import itertools
 from collections import defaultdict
 
-# General arithmetic operators for multidimensional tuples
-add = lambda lhs, rhs: tuple((a + b for a, b in zip(*expand_args(lhs, rhs))))
-sub = lambda lhs, rhs: tuple((a - b for a, b in zip(*expand_args(lhs, rhs))))
-mul = lambda lhs, rhs: tuple((a * b for a, b in zip(*expand_args(lhs, rhs))))
-div = lambda lhs, rhs: tuple((a // b for a, b in zip(*expand_args(lhs, rhs))))
-mod = lambda lhs, rhs: tuple((a % b for a, b in zip(*expand_args(lhs, rhs))))
-
-neg = lambda value: tuple((-x for x in value))
-
-# Grid utils
-ZERO = (0, 0)
-ONE = (1, 1)
-
-LEFT = (0, -1)
-RIGHT = (0, 1)
-UP = (-1, 0)
-DOWN = (1, 0)
-
-CARDINAL_DIRECTIONS = \
-[
-	LEFT, RIGHT, UP, DOWN
-]
-
 in_grid = lambda pos, size: pos[0] >= 0 and pos[1] >= 0 and pos[0] < size[1] and pos[1] < size[1]
 all_coordinates = lambda size, padding=0: itertools.product(*( range(padding, dim - padding) for dim in size ))
+
+def max_safe(*args):
+	return max(*(arg for arg in args if arg is not None))
+
+def min_safe(*args):
+	return min(*(arg for arg in args if arg is not None))
 
 def expand_args(lhs, rhs):
 	l_is_iter = is_iterable(lhs)
@@ -72,3 +55,32 @@ def groupby(items, key):
 def index(items, value, key=lambda x: x):
 	iter = (i for i, v in enumerate(items) if key(v) == value)
 	return next(iter)
+
+class Point(tuple):
+    __add__ = lambda self, other: add(self, other)
+    __sub__ = lambda self, other: sub(self, other)
+    __mul__ = lambda self, other: mul(self, other)
+    __floordiv__ = lambda self, other: div(self, other)
+    __mod__ = lambda self, other: mod(self, other)
+
+# General arithmetic operators for multidimensional tuples
+add = lambda lhs, rhs: Point((a + b for a, b in zip(*expand_args(lhs, rhs))))
+sub = lambda lhs, rhs: Point((a - b for a, b in zip(*expand_args(lhs, rhs))))
+mul = lambda lhs, rhs: Point((a * b for a, b in zip(*expand_args(lhs, rhs))))
+div = lambda lhs, rhs: Point((a // b for a, b in zip(*expand_args(lhs, rhs))))
+mod = lambda lhs, rhs: Point((a % b for a, b in zip(*expand_args(lhs, rhs))))
+neg = lambda value: Point((-x for x in value))
+
+# Grid utils
+ZERO = Point((0, 0))
+ONE = Point((1, 1))
+
+LEFT = Point((0, -1))
+RIGHT = Point((0, 1))
+UP = Point((-1, 0))
+DOWN = Point((1, 0))
+
+CARDINAL_DIRECTIONS = \
+[
+	LEFT, RIGHT, UP, DOWN
+]
