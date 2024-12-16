@@ -6,6 +6,7 @@ add = lambda lhs, rhs: tuple((a + b for a, b in zip(*expand_args(lhs, rhs))))
 sub = lambda lhs, rhs: tuple((a - b for a, b in zip(*expand_args(lhs, rhs))))
 mul = lambda lhs, rhs: tuple((a * b for a, b in zip(*expand_args(lhs, rhs))))
 div = lambda lhs, rhs: tuple((a // b for a, b in zip(*expand_args(lhs, rhs))))
+mod = lambda lhs, rhs: tuple((a % b for a, b in zip(*expand_args(lhs, rhs))))
 
 neg = lambda value: tuple((-x for x in value))
 

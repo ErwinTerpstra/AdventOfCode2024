@@ -8,6 +8,10 @@ MODE_LINES = 'lines'
 MODE_GRID = 'grid'
 MODE_STRING = 'string'
 
+# Determine input type from command line parameters
+# Should usually be 'input' or 'example'
+input_type = lambda: sys.argv[1] if len(sys.argv) >= 2 else 'input'
+
 def load_input(
 		mode: str, 
 		remove_newlines = True, 
@@ -21,10 +25,6 @@ def load_input(
 
 	preprocess = preprocess or (lambda x: x)
 
-	# Determine input type from command line parameters
-	# Should usually be 'input' or 'example'
-	input_type = sys.argv[1] if len(sys.argv) >= 2 else 'input'
-
 	# Get the name of the executing script file
 	script_file = Path(sys.argv[0])
 
@@ -34,7 +34,7 @@ def load_input(
 		day_name = day_name[0:-1]
 
 	# Determine input file name based on script file + input type
-	input_file = f'{day_name}_{input_type}.txt'
+	input_file = f'{day_name}_{input_type()}.txt'
 
 	# Read the input file
 	with open(input_file) as f:
