@@ -1,14 +1,68 @@
 import itertools
+import math
 from collections import defaultdict
 
 in_grid = lambda pos, size: pos[0] >= 0 and pos[1] >= 0 and pos[0] < size[1] and pos[1] < size[1]
 all_coordinates = lambda size, padding=0: itertools.product(*( range(padding, dim - padding) for dim in size ))
+filter_none = lambda items: (x for x in items if x is not None)
+
+def min_item(items, key=lambda x: x):
+	lowest_item = None
+	lowest_val = None
+
+	for item in items:
+		value = key(item)
+		if lowest_val is None or value < lowest_val:
+			lowest_item = item
+			lowest_val = value
+
+	return lowest_item
+
+def max_item(items, key=lambda x: x):
+	highest_item = None
+	highest_val = None
+
+	for item in items:
+		value = key(item)
+		if highest_val is None or value > highest_val:
+			highest_item = item
+			highest_val = value
+
+	return highest_item
 
 def max_safe(*args):
-	return max(*(arg for arg in args if arg is not None))
+	c = sum(1 for x in filter_none(args))
+
+	if c == 0:
+		return None
+	
+	if c == 1:
+		return next(filter_none(args))
+
+	return max(*filter_none(args))
 
 def min_safe(*args):
-	return min(*(arg for arg in args if arg is not None))
+	c = sum(1 for x in filter_none(args))
+
+	if c == 0:
+		return None
+	
+	if c == 1:
+		return next(filter_none(args))
+
+	return min(*filter_none(args))
+
+def argmin(items, key=lambda x: x):
+	lowest_i = None
+	lowest_val = None
+
+	for i in range(len(items)):
+		value = key(items[i])
+		if lowest_val is None or value < lowest_val:
+			lowest_i = i
+			lowest_val = value
+
+	return lowest_i
 
 def expand_args(lhs, rhs):
 	l_is_iter = is_iterable(lhs)
@@ -52,16 +106,25 @@ def groupby(items, key):
 
 	return d
 
+def first_index(items, predicate):
+	iter = (i for i, v in enumerate(items) if predicate(v))
+	return next(iter, -1)
+
 def index(items, value, key=lambda x: x):
 	iter = (i for i, v in enumerate(items) if key(v) == value)
-	return next(iter)
+	return next(iter, -1)
 
 class Point(tuple):
-    __add__ = lambda self, other: add(self, other)
-    __sub__ = lambda self, other: sub(self, other)
-    __mul__ = lambda self, other: mul(self, other)
-    __floordiv__ = lambda self, other: div(self, other)
-    __mod__ = lambda self, other: mod(self, other)
+
+	rotCW = lambda self: Point((self[1], -self[0]))
+	rotCCW = lambda self: Point((-self[1], self[0]))
+
+	__add__ = lambda self, other: add(self, other)
+	__sub__ = lambda self, other: sub(self, other)
+	__mul__ = lambda self, other: mul(self, other)
+	__floordiv__ = lambda self, other: div(self, other)
+	__mod__ = lambda self, other: mod(self, other)
+	__abs__ = lambda self: Point((abs(x) for x in self))
 
 # General arithmetic operators for multidimensional tuples
 add = lambda lhs, rhs: Point((a + b for a, b in zip(*expand_args(lhs, rhs))))
@@ -70,6 +133,8 @@ mul = lambda lhs, rhs: Point((a * b for a, b in zip(*expand_args(lhs, rhs))))
 div = lambda lhs, rhs: Point((a // b for a, b in zip(*expand_args(lhs, rhs))))
 mod = lambda lhs, rhs: Point((a % b for a, b in zip(*expand_args(lhs, rhs))))
 neg = lambda value: Point((-x for x in value))
+
+sign = lambda value: math.copysign(1, value)
 
 # Grid utils
 ZERO = Point((0, 0))
