@@ -1,9 +1,12 @@
 import itertools
 import math
+
+import numpy as np
+
 from collections import defaultdict
 
 in_grid = lambda pos, size: pos[0] >= 0 and pos[1] >= 0 and pos[0] < size[1] and pos[1] < size[1]
-all_coordinates = lambda size, padding=0: itertools.product(*( range(padding, dim - padding) for dim in size ))
+all_coordinates = lambda size, padding=0: (Point(x) for x in itertools.product(*( range(padding, dim - padding) for dim in size )))
 filter_none = lambda items: (x for x in items if x is not None)
 
 def min_item(items, key=lambda x: x):
@@ -119,6 +122,10 @@ class Point(tuple):
 	rotCW = lambda self: Point((self[1], -self[0]))
 	rotCCW = lambda self: Point((-self[1], self[0]))
 
+	manhattan = lambda self: sum((abs(x) for x in self))
+
+	is_zero = lambda self: all(x == 0 for x in self)
+
 	__add__ = lambda self, other: add(self, other)
 	__sub__ = lambda self, other: sub(self, other)
 	__mul__ = lambda self, other: mul(self, other)
@@ -149,3 +156,31 @@ CARDINAL_DIRECTIONS = \
 [
 	LEFT, RIGHT, UP, DOWN
 ]
+
+def first_position(mask):
+	return Point((l[0] for l in np.where(mask)))
+
+def all_positions(mask):
+	return ( Point(items) for items in zip(*np.where(mask)) )
+
+def neighbours(pos, grid_size = None):
+	for dir in CARDINAL_DIRECTIONS:
+		neighbour = pos + dir
+
+		if grid_size is not None and not in_grid(neighbour, grid_size):
+			continue
+
+		yield neighbour
+
+def radius_around(pos, min_distance, max_distance, grid_size=None):
+	for offset in (Point(x) for x in itertools.product(*( range(-max_distance, max_distance + 1) for dim in pos ))):
+		d = offset.manhattan()
+
+		if d < min_distance or d > max_distance:
+			continue
+
+		n = pos + offset
+		if grid_size != None and not in_grid(n, grid_size):
+			continue
+
+		yield n
