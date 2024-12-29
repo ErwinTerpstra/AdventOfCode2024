@@ -67,7 +67,7 @@ def load_input(
 
 	# Random newline print since the debugger output starts on the same
 	# line as the command line :/
-	print('')
+	print(f'Loaded {day_name} - {input_type()}')
 
 	return lines
 

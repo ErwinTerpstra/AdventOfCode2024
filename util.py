@@ -124,7 +124,10 @@ class Point(tuple):
 
 	manhattan = lambda self: sum((abs(x) for x in self))
 
+	sign = lambda self: Point((sign(x) for x in self))
 	is_zero = lambda self: all(x == 0 for x in self)
+
+	keep = lambda self, axis: Point((x if i == axis else 0 for i, x in enumerate(self)))
 
 	__add__ = lambda self, other: add(self, other)
 	__sub__ = lambda self, other: sub(self, other)
@@ -132,6 +135,13 @@ class Point(tuple):
 	__floordiv__ = lambda self, other: div(self, other)
 	__mod__ = lambda self, other: mod(self, other)
 	__abs__ = lambda self: Point((abs(x) for x in self))
+	__hash__ = lambda self: hash(tuple(self))
+
+	def __eq__(self, other):
+		if isinstance(other, Point):
+			return tuple(self) == tuple(other)
+		
+		return False
 
 # General arithmetic operators for multidimensional tuples
 add = lambda lhs, rhs: Point((a + b for a, b in zip(*expand_args(lhs, rhs))))
@@ -141,7 +151,8 @@ div = lambda lhs, rhs: Point((a // b for a, b in zip(*expand_args(lhs, rhs))))
 mod = lambda lhs, rhs: Point((a % b for a, b in zip(*expand_args(lhs, rhs))))
 neg = lambda value: Point((-x for x in value))
 
-sign = lambda value: math.copysign(1, value)
+sign = lambda value: math.copysign(1, value) if type(value) is float else signi(value)
+signi = lambda value: 1 if value > 0 else -1 if value < 0 else 0
 
 # Grid utils
 ZERO = Point((0, 0))
