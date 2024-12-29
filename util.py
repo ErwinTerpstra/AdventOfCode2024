@@ -100,6 +100,10 @@ def reversed_as_tuple(iter):
 	"""Reverse the given iterator, return as tuple"""
 	return tuple(reversed(tuple(iter)))
 
+def sort_tuple(iter):
+	"""Return the given iterator sorted as tuple"""
+	return tuple(sorted(iter))
+
 def groupby(items, key):
 	"""Group the given items by a key. Returns a dictionary of lists"""
 	d = defaultdict(list)
@@ -195,3 +199,19 @@ def radius_around(pos, min_distance, max_distance, grid_size=None):
 			continue
 
 		yield n
+
+def bron_kerbosch(p : set, e : dict, r : set = set(), x : set = set(), cliques : list = list()) -> list:
+	"""Finds all maximal cliques in the given graph. P should be a set of vertex labels. E should be a dict of edges per vertex."""
+	if len(p) == 0 and len(x) == 0:
+		cliques.append(r)
+		return cliques
+	
+	for v in set(p):
+		n = e[v]
+		
+		bron_kerbosch(p & n, e, r | { v }, x & n, cliques)
+		
+		p.remove(v)
+		x.add(v)
+
+	return cliques

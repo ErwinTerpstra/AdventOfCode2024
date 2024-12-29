@@ -19,6 +19,7 @@ def load_input(
 		column_separator = None,
 		use_numpy = False, 
 		dtype = str, 
+		row_type = None,
 		preprocess = None,
 		numpy_axis = 0):
 	"""Load input based on the current executing script."""
@@ -51,8 +52,9 @@ def load_input(
 	# Split by whitespace into grid
 	if mode == MODE_GRID:
 		split_line = lambda line: line.split(column_separator) if column_separator != '' else line
-	
-		lines = [ [ dtype(preprocess(x)) for x in split_line(line) ] for line in lines]
+		apply_row_type = lambda value: row_type(value) if row_type is not None else value
+
+		lines = [ apply_row_type([ dtype(preprocess(x)) for x in split_line(line) ]) for line in lines]
 	elif mode == MODE_STRING:
 		lines = ''.join(lines)
 	else:
